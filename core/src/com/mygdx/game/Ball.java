@@ -18,7 +18,7 @@ public class Ball extends Entity {
 
     @Override
     protected Texture createTexture() {
-        return null; // Не используется, т.к. мы создаем Sprite напрямую
+        return null;
     }
 
     @Override
@@ -43,20 +43,20 @@ public class Ball extends Entity {
 
     @Override
     protected Sprite createSprite() {
-        // Внимание: имя файла должно точно совпадать с тем, что в папке assets (регистр важен!)
+
         Sprite s = new Sprite(new Texture("BALL.png"));
-        // Диаметр = радиус * 2. Если радиус 25, то диаметр 50 (в метрах Box2D).
-        // Умножаем на PPM, чтобы получить пиксели: 50 * 100 = 5000? Нет, мы задаем размер в метрах для спрайта,
-        // но libGDX сам масштабирует. Проще всего задать размер в пикселях:
-        s.setSize(75, 75); // 50 пикселей ширина и высота (подбери под свою картинку)
+        // Диаметр = радиус * 2. Если радиус 25, то диаметр 50
+        // Умножаем на PPM, чтобы получить пиксели:
+        //  libGDX  масштабирует. Проще всего задать размер в пикселях:
+        s.setSize(75, 75); // 50 пикселей ширина и высота
         return s;
     }
 
     public void jump() {
         if (isGrounded) {
-            // 1. Обнуляем вертикальную скорость, чтобы прыжок не накапливался
+            // 1. Обнуление вертикальной скорости, чтобы прыжок не накапливался
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
-            // 2. Прикладываем импульс. Если прыжок слишком слабый, увеличь 1.2f до 1.5f
+            // 2. Прикладываем импульс.
             body.applyLinearImpulse(new Vector2(0, 5.2f), body.getWorldCenter(), true);
             isGrounded = false;
         }

@@ -20,13 +20,13 @@ public abstract class Entity {
     public Entity(World world, float x, float y) {
         this.world = world;
 
-        // ВАЖНО: СНАЧАЛА создаем спрайт, чтобы в createBody можно было использовать его размеры
+
         this.sprite = createSprite();
 
-        // ТЕПЕРЬ создаем физику
+
         this.body = createBody(x / PPM, y / PPM);
 
-        // Связываем тело Box2D с этим Java-объектом
+
         this.body.setUserData(this);
     }
 
@@ -58,7 +58,7 @@ public abstract class Entity {
         }
     }
 
-    // Методы, которых не хватало для MyGdxGame
+
     public boolean isToRemove() { return toRemove; }
     public void setToRemove(boolean toRemove) { this.toRemove = toRemove; }
     public Body getBody() { return body; }
