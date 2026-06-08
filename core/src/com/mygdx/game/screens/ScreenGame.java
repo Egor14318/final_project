@@ -45,11 +45,11 @@ public class ScreenGame implements Screen {
 
         // Целевые позиции: X чуть левее центра, Y чуть ниже центра
         targetX = MyGdxGame.SCR_WIDTH * 0.35f;  // 35% от ширины
-        targetY = MyGdxGame.SCR_HEIGHT * 0.4f;  // 40% от высоты
+        targetY = MyGdxGame.SCR_HEIGHT * 0.3f;  // 30% от высоты (40 для плавности)(20 для резкости)
 
         initTubes();
 
-        // Обработчик столкновений через beginContact/endContact
+        // Обработчик столкновений через beginContact/endContact (без end и pre solve)
         world.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {

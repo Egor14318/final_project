@@ -70,7 +70,7 @@ public class Tube {
     }
 
     public void draw(Batch batch) {
-        // todo batch.draw(textureUpperTube, x, gapY + gapHeight / 2, width, height);
+         batch.draw(textureUpperTube, x, gapY + gapHeight / 2, width, height);
         batch.draw(textureDownTube, x, gapY - gapHeight / 2 - height, width, height);
     }
 

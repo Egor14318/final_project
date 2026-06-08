@@ -8,11 +8,11 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import com.mygdx.game.components.ButtonView;
 import com.mygdx.game.components.MovingBackground;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.components.TextButton;
-
-
+import com.mygdx.game.components.TextView;
 
 
 public class ScreenMenu implements Screen {
@@ -24,6 +24,12 @@ public class ScreenMenu implements Screen {
 
 
 
+    TextView titleView;
+    ButtonView startButtonView;
+    ButtonView settingsButtonView;
+    ButtonView exitButtonView;
+
+
 
     public ScreenMenu(MyGdxGame myGdxGame) {
         this.myGdxGame  = myGdxGame;
@@ -31,6 +37,10 @@ public class ScreenMenu implements Screen {
         background = new MovingBackground("background.jpg");
         buttonExit = new TextButton(50,400,"Exit");
         buttonStart = new TextButton(600,400,"Start");
+        startButtonView = new ButtonView(600, 246, 440, 70, myGdxGame.commonWhiteFont, myGdxGame.BUTTON_LONG_BG_IMG_PATH, "start");
+        settingsButtonView = new ButtonView(140, 551, 440, 70, myGdxGame.commonWhiteFont, myGdxGame.BUTTON_LONG_BG_IMG_PATH, "setting");
+        exitButtonView = new ButtonView(50, 256, 440, 70, myGdxGame.commonWhiteFont, myGdxGame.BUTTON_LONG_BG_IMG_PATH, "exit");
+
 
 
     }
@@ -50,7 +60,15 @@ public class ScreenMenu implements Screen {
             if (buttonExit.isHit((int) touch.x, (int) touch.y)) {
                 Gdx.app.exit();
             }
+            if (startButtonView.isHit((int) touch.x, (int) touch.y)) {
+                myGdxGame.setScreen(myGdxGame.screenGame);
+            }
+            if (exitButtonView.isHit((int) touch.x, (int) touch.y)) {
+                Gdx.app.exit();
+            }
         }
+
+
 
         ScreenUtils.clear(1, 0, 0, 1);
 
@@ -61,6 +79,9 @@ public class ScreenMenu implements Screen {
         background.draw(myGdxGame.batch);
         buttonExit.draw(myGdxGame.batch);
         buttonStart.draw(myGdxGame.batch);
+        startButtonView.draw(myGdxGame.batch);
+        exitButtonView.draw(myGdxGame.batch);
+
         myGdxGame.batch.end();
 
     }
