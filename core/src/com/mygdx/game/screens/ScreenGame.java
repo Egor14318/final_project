@@ -8,15 +8,17 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.characters.Bird;
 import com.mygdx.game.characters.Floor;
 import com.mygdx.game.characters.Tube;
+import com.mygdx.game.components.ButtonView;
 import com.mygdx.game.components.MovingBackground;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.components.TextView;
 
 public class ScreenGame implements Screen {
 
-    ScreenRestart screenRestart;
     Bird bird;
     Floor floor;
     MovingBackground background;
+    TextView poit;
     WorldManifold worldManifold;
     int gamePoints;
     boolean isGameOver;
@@ -30,6 +32,9 @@ public class ScreenGame implements Screen {
     float targetX; // Целевая позиция игрока по X
     float gameSpeed = 10f;
     float targetY;
+    float poits;
+    int pont;
+
 
     public ScreenGame(MyGdxGame myGdxGame) {
         this.myGdxGame = myGdxGame;
@@ -40,6 +45,7 @@ public class ScreenGame implements Screen {
         // Игрок спавнится слева (x=100)
         bird = new Bird(world, 100, 200, 160, 160);
         floor = new Floor(world, MyGdxGame.SCR_WIDTH, MyGdxGame.SCR_HEIGHT);
+        poit = new TextView(myGdxGame.commonWhiteFont,20,30,pointCounter());
 
         background = new MovingBackground("background.jpg");
 
@@ -59,13 +65,13 @@ public class ScreenGame implements Screen {
                 Object udA = fa.getUserData();
                 Object udB = fb.getUserData();
 
-                // Сенсор под ногами коснулся пола → игрок на земле
+
                 if ((udA != null && udA.equals("groundSensor")) ||
                         (udB != null && udB.equals("groundSensor"))) {
                     bird.setOnGround(true);
                 }
 
-                // Игрок столкнулся с препятствием → game over
+                // столкнулся -+ game over
                 if ((udA != null && udA.equals("obstacle")) ||
                         (udB != null && udB.equals("obstacle"))) {
                     isGameOver = true;
@@ -110,6 +116,16 @@ public class ScreenGame implements Screen {
         initTubes();
     }
 
+    public String pointCounter(){
+        poits+=0.01;
+        pont=(int)poits;
+        String strr = Integer.toString(pont);
+        System.out.println(pont);
+        return strr;
+
+    }
+
+
     @Override
     public void render(float delta) {
         if (Gdx.input.justTouched() && !isGameOver) {
@@ -119,8 +135,10 @@ public class ScreenGame implements Screen {
         world.step(1 / 60f, 6, 2);
 
 
+
         bird.updateVerticalBehavior(targetY);
         bird.updateHorizontalBehavior(targetX, delta); // <-- новое
+
 
 
         gameSpeed = MathUtils.clamp(gameSpeed + delta * 0.5f, 10f, 25f);
@@ -138,17 +156,27 @@ public class ScreenGame implements Screen {
                 tube.setPointReceived();
             }
         }
+        if ((bird.body.getPosition().x * Bird.PPM) - (bird.width / 2f)<0){
+
+            myGdxGame.setScreen(myGdxGame.screenRestart);
+            //resume();
+            //bird.body.setTransform(100 / Bird.PPM, targetY / Bird.PPM, 0);
+            //bird = new Bird(world, 200, 200, 160, 160);
+
+        //todo поменять тексуру камней(труб) дописать реализацию проигрыша и победы и доделать другие экраны с презентацией (проблемы с физикой после рестарта)
+        }
 
         if (isGameOver) {
             myGdxGame.screenRestart.gamePoints = gamePoints;
             myGdxGame.setScreen(myGdxGame.screenRestart);
             return;
         }
+        pointCounter();
 
         myGdxGame.batch.begin();
         background.draw(myGdxGame.batch);
-        floor.draw(myGdxGame.batch);
         bird.draw(myGdxGame.batch);
+        poit.draw(myGdxGame.batch);
         for (Tube tube : tubes) tube.draw(myGdxGame.batch);
         myGdxGame.batch.end();
     }

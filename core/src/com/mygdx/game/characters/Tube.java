@@ -33,7 +33,7 @@ public class Tube {
         distanceBetweenTubes = (SCR_WIDTH + width) / (tubeCount - 1);
         x = distanceBetweenTubes * tubeIdx + SCR_WIDTH;
 
-        textureUpperTube = new Texture("obstacle.png");
+        //textureUpperTube = new Texture("obstacle.png");
         textureDownTube = new Texture("obstacle.png");
 
 
@@ -51,12 +51,12 @@ public class Tube {
         fixtureDef.filter.maskBits = Bits.PLAYER; // Препятствие сталкивается только с игроком
 
         // Верхнее препятствие
-        BodyDef upperDef = new BodyDef();
-        upperDef.type = BodyDef.BodyType.KinematicBody;
-        upperDef.position.set((x + width / 2f) / Bird.PPM, (gapY + gapHeight / 2f + height / 2f) / Bird.PPM);
-        upperBody = world.createBody(upperDef);
-        upperBody.createFixture(fixtureDef);
-        upperBody.setUserData("obstacle");
+        //BodyDef upperDef = new BodyDef();
+        //upperDef.type = BodyDef.BodyType.KinematicBody;
+       // upperDef.position.set((x + width / 2f) / Bird.PPM, (gapY + gapHeight / 2f + height / 2f) / Bird.PPM);
+        //upperBody = world.createBody(upperDef);
+        //upperBody.createFixture(fixtureDef);
+        //upperBody.setUserData("obstacle");
 
         // Нижнее препятствие
         BodyDef lowerDef = new BodyDef();
@@ -70,7 +70,7 @@ public class Tube {
     }
 
     public void draw(Batch batch) {
-         batch.draw(textureUpperTube, x, gapY + gapHeight / 2, width, height);
+         //batch.draw(textureUpperTube, x, gapY + gapHeight / 2, width, height);
         batch.draw(textureDownTube, x, gapY - gapHeight / 2 - height, width, height);
     }
 
@@ -78,9 +78,9 @@ public class Tube {
         x -= speed;
 
         // Обновляем позиции физических тел
-        if (upperBody != null) {
-            upperBody.setTransform((x + width / 2f) / Bird.PPM, (gapY + gapHeight / 2f + height / 2f) / Bird.PPM, 0);
-        }
+        //if (upperBody != null) {
+            //upperBody.setTransform((x + width / 2f) / Bird.PPM, (gapY + gapHeight / 2f + height / 2f) / Bird.PPM, 0);
+        //}
         if (lowerBody != null) {
             lowerBody.setTransform((x + width / 2f) / Bird.PPM, (gapY - gapHeight / 2f - height / 2f) / Bird.PPM, 0);
         }

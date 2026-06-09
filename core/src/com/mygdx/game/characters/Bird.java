@@ -5,12 +5,14 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.game.screens.ScreenRestart;
 
 public class Bird {
     public Body body;
     public Fixture groundSensor;
-    int width;
-    int height;
+    public static int width;
+    public static int height;
+    public ScreenRestart screenRestart;
     boolean isOnGround = false;
     public static final float PPM = 100f;
 
@@ -151,7 +153,11 @@ public class Bird {
                 width / 2f, height / 2f, width, height, 1, 1, angle);
     }
 
+
+
     public void dispose() {
         texture.getTexture().dispose();
     }
+
+
 }
