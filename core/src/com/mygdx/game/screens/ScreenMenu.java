@@ -37,7 +37,7 @@ public class ScreenMenu implements Screen {
         background = new MovingBackground("background.jpg");
         buttonExit = new TextButton(50,400,"Exit");
         buttonStart = new TextButton(600,400,"Start");
-        startButtonView = new ButtonView(600, 246, 440, 70, myGdxGame.commonWhiteFont, myGdxGame.BUTTON_LONG_BG_IMG_PATH, "start");
+        startButtonView = new ButtonView(600, 256, 440, 70, myGdxGame.commonWhiteFont, myGdxGame.BUTTON_LONG_BG_IMG_PATH, "start");
         settingsButtonView = new ButtonView(140, 551, 440, 70, myGdxGame.commonWhiteFont, myGdxGame.BUTTON_LONG_BG_IMG_PATH, "setting");
         exitButtonView = new ButtonView(50, 256, 440, 70, myGdxGame.commonWhiteFont, myGdxGame.BUTTON_LONG_BG_IMG_PATH, "exit");
 
@@ -77,8 +77,8 @@ public class ScreenMenu implements Screen {
 
         myGdxGame.batch.begin();
         background.draw(myGdxGame.batch);
-        buttonExit.draw(myGdxGame.batch);
-        buttonStart.draw(myGdxGame.batch);
+        //buttonExit.draw(myGdxGame.batch);
+        //buttonStart.draw(myGdxGame.batch);
         startButtonView.draw(myGdxGame.batch);
         exitButtonView.draw(myGdxGame.batch);
 

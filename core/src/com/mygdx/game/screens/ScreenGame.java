@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.characters.Bird;
 import com.mygdx.game.characters.Floor;
 import com.mygdx.game.characters.Tube;
-import com.mygdx.game.components.ButtonView;
 import com.mygdx.game.components.MovingBackground;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.components.TextView;
@@ -19,7 +18,6 @@ public class ScreenGame implements Screen {
     Floor floor;
     MovingBackground background;
     TextView poit;
-    WorldManifold worldManifold;
     int gamePoints;
     boolean isGameOver;
     MyGdxGame myGdxGame;
@@ -29,49 +27,59 @@ public class ScreenGame implements Screen {
     World world;
     Box2DDebugRenderer debugRenderer;
 
-    float targetX; // Целевая позиция игрока по X
+    float targetX;
     float gameSpeed = 10f;
     float targetY;
     float poits;
     int pont;
 
-
     public ScreenGame(MyGdxGame myGdxGame) {
         this.myGdxGame = myGdxGame;
 
-        world = new World(new com.badlogic.gdx.math.Vector2(0, -15f), true);
         debugRenderer = new Box2DDebugRenderer();
+        background = new MovingBackground("background.jpg");
+        poit = new TextView(myGdxGame.commonWhiteFont, 20, 30, "0");
 
-        // Игрок спавнится слева (x=100)
+        targetX = MyGdxGame.SCR_WIDTH * 0.35f;
+        targetY = MyGdxGame.SCR_HEIGHT * 0.3f;
+
+        // Инициализация при первом запуске
+        initGame();
+    }
+
+    /**
+     * Полная инициализация/сброс игры.
+     * Вызывается при первом запуске и при каждом рестарте.
+     */
+    private void initGame() {
+        // Уничтожаем старый мир, если он есть
+        if (world != null) {
+            world.dispose();
+        }
+
+        // Создаём новый физический мир
+        world = new World(new com.badlogic.gdx.math.Vector2(0, -15f), true);
+
+        // Создаём новые тела
         bird = new Bird(world, 100, 200, 160, 160);
         floor = new Floor(world, MyGdxGame.SCR_WIDTH, MyGdxGame.SCR_HEIGHT);
-        poit = new TextView(myGdxGame.commonWhiteFont,20,30,pointCounter());
-
-        background = new MovingBackground("background.jpg");
-
-        // Целевые позиции: X чуть левее центра, Y чуть ниже центра
-        targetX = MyGdxGame.SCR_WIDTH * 0.35f;  // 35% от ширины
-        targetY = MyGdxGame.SCR_HEIGHT * 0.3f;  // 30% от высоты (40 для плавности)(20 для резкости)
 
         initTubes();
 
-        // Обработчик столкновений через beginContact/endContact (без end и pre solve)
+        // Устанавливаем ContactListener
         world.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
                 Fixture fa = contact.getFixtureA();
                 Fixture fb = contact.getFixtureB();
-
                 Object udA = fa.getUserData();
                 Object udB = fb.getUserData();
-
 
                 if ((udA != null && udA.equals("groundSensor")) ||
                         (udB != null && udB.equals("groundSensor"))) {
                     bird.setOnGround(true);
                 }
 
-                // столкнулся -+ game over
                 if ((udA != null && udA.equals("obstacle")) ||
                         (udB != null && udB.equals("obstacle"))) {
                     isGameOver = true;
@@ -82,11 +90,9 @@ public class ScreenGame implements Screen {
             public void endContact(Contact contact) {
                 Fixture fa = contact.getFixtureA();
                 Fixture fb = contact.getFixtureB();
-
                 Object udA = fa.getUserData();
                 Object udB = fb.getUserData();
 
-                // Сенсор оторвался от пола → игрок в воздухе
                 if ((udA != null && udA.equals("groundSensor")) ||
                         (udB != null && udB.equals("groundSensor"))) {
                     bird.setOnGround(false);
@@ -94,37 +100,31 @@ public class ScreenGame implements Screen {
             }
 
             @Override
-            public void preSolve(Contact contact, Manifold oldManifold) {
-            }
+            public void preSolve(Contact contact, Manifold oldManifold) {}
 
             @Override
-            public void postSolve(Contact contact, ContactImpulse impulse) {
-            }
+            public void postSolve(Contact contact, ContactImpulse impulse) {}
         });
     }
+
     @Override
     public void show() {
+        // При каждом входе на экран — полный сброс
         isGameOver = false;
         gamePoints = 0;
         gameSpeed = 10f;
+        poits = 0;
+        pont = 0;
 
-
-        bird.body.setTransform(100 / Bird.PPM, targetY / Bird.PPM, 0);
-        bird.body.setLinearVelocity(0, 0);
-        bird.setOnGround(false);
-
-        initTubes();
+        // Пересоздаём мир и все тела
+        initGame();
     }
 
-    public String pointCounter(){
-        poits+=0.01;
-        pont=(int)poits;
-        String strr = Integer.toString(pont);
-        System.out.println(pont);
-        return strr;
-
+    public String pointCounter() {
+        poits += 0.01;
+        pont = (int) poits;
+        return Integer.toString(pont);
     }
-
 
     @Override
     public void render(float delta) {
@@ -134,12 +134,8 @@ public class ScreenGame implements Screen {
 
         world.step(1 / 60f, 6, 2);
 
-
-
         bird.updateVerticalBehavior(targetY);
-        bird.updateHorizontalBehavior(targetX, delta); // <-- новое
-
-
+        bird.updateHorizontalBehavior(targetX, delta);
 
         gameSpeed = MathUtils.clamp(gameSpeed + delta * 0.5f, 10f, 25f);
 
@@ -156,14 +152,10 @@ public class ScreenGame implements Screen {
                 tube.setPointReceived();
             }
         }
-        if ((bird.body.getPosition().x * Bird.PPM) - (bird.width / 2f)<0){
 
-            myGdxGame.setScreen(myGdxGame.screenRestart);
-            //resume();
-            //bird.body.setTransform(100 / Bird.PPM, targetY / Bird.PPM, 0);
-            //bird = new Bird(world, 200, 200, 160, 160);
-
-        //todo поменять тексуру камней(труб) дописать реализацию проигрыша и победы и доделать другие экраны с презентацией (проблемы с физикой после рестарта)
+        // Выход за левую границу → game over
+        if ((bird.body.getPosition().x * Bird.PPM) - (bird.width / 2f) < 0) {
+            isGameOver = true;
         }
 
         if (isGameOver) {
@@ -171,7 +163,9 @@ public class ScreenGame implements Screen {
             myGdxGame.setScreen(myGdxGame.screenRestart);
             return;
         }
-        pointCounter();
+
+        // Обновляем счётчик на экране
+        poit.setText(pointCounter());
 
         myGdxGame.batch.begin();
         background.draw(myGdxGame.batch);
@@ -190,22 +184,15 @@ public class ScreenGame implements Screen {
 
     @Override
     public void dispose() {
-        bird.dispose();
-        floor.dispose();
-        background.dispose();
-        world.dispose();
-        debugRenderer.dispose();
+        if (bird != null) bird.dispose();
+        if (floor != null) floor.dispose();
+        if (background != null) background.dispose();
+        if (world != null) world.dispose();
+        if (debugRenderer != null) debugRenderer.dispose();
     }
 
-    @Override
-    public void resize(int width, int height) {}
-
-    @Override
-    public void pause() {}
-
-    @Override
-    public void resume() {}
-
-    @Override
-    public void hide() {}
+    @Override public void resize(int width, int height) {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
 }
